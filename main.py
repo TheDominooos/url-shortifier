@@ -1,15 +1,20 @@
-from typing import Union
-
 from fastapi import FastAPI
+import shortuuid
 
 app = FastAPI()
 
+items = {}
 
-@app.get("/")
-def read_root():
-    return {"Hello": "World"}
+@app.put("/createurl/{url}")
+def create_url(url: str):
+    uuid=shortuuid.uuid()
+    items[uuid] = url
+    return {"uuid": uuid, "targetURL": items[uuid]}
 
+@app.get("/geturl/{uuid}")
+def get_url(uuid: str):
+    return {"uuid": uuid, "targetURL": items[uuid]}
 
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: Union[str, None] = None):
-    return {"item_id": item_id, "q": q}
+@app.get("/readdictionary/")
+def read_dictionary():
+    return items
